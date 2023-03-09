@@ -1,16 +1,36 @@
+// console.log('i exist');
 const imageContainer = document.getElementById('image-container');
 const loader = document.getElementById('loader');
 
+let ready = false;
+let imagesLoaded = 0;
+let totalImages =0;
+
 let photosArray = [];
 //Unsplash API
-const count=10;
-const apiKey = 'ehz38a0bgKxB_fwl3uNB8gIpBuwe8-WsDsH43aaXExk';
+const count=30;
+// const apiKey = 'dtkyZAV5zRvH10hIQ0tZ89CEuQeXWfFaQpLXEkEUYko';
+const apiKey = 'ehz38a0bgKxB_fwl3uNB8gIpBuwe8-WsDsH43aaXExk';//amar
 const apiUrl = `https://api.unsplash.com/photos/random/?client_id=${apiKey}&count=${count}`;
+
+function imageLoaded(){
+    imagesLoaded++;
+    console.log('images loaded')
+    if(imagesLoaded === totalImages){
+        ready = true;
+        console.log('ready=' ,ready);
+    }
+
+}
 
 //create elements for links & photos ,Add to DOM
 function displayPhotos(){
+    imagesLoaded =0 ;
+    totalImages = photosArray.length;
+    console.log('total images',totalImages);
     //Run function for each object in photosArray
     photosArray.forEach((photo)=>{
+        imageLoaded();
         //create <a> link to unsplash
      const item = document.createElement('a');
      item.setAttribute('href',photo.links.html);//---->commenting out for DRY code we will use helper func instead
@@ -50,6 +70,15 @@ async function getPhotos() {
     }
 }
 
+// check to see if scrolling near bottom of page, Load More Photos
+window.addEventListener('scroll',()=>{
+ if(window.innerHeight+window.scrollY >= document.body.offsetHeight - 1000 && ready)
+ {
+    // console.log('load more');
+    ready = false;
+    getPhotos();
+ }
+});
 
 //on Load
 getPhotos();
